@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- SEO Meta Tags -->
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Play Real Scorpio S11 Driving Game - Poly Gamer Official Game" />
+    <meta name="keywords" content="scorpio game, poly gamer, scorpio driving game, real car game" />
+    <meta name="google-site-verification" content="J1_E7cSYpVnoAFCZZdEMGbogg4bmSqiEBXFQdNaQtjw" />
+    
+    <title>POLY GAMER | Pro Player Hub</title>
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --neon: #00ffcc;
+            --dark-bg: #050608;
+            --card-bg: #0f1015;
+            --gold: #ffd700;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background: var(--dark-bg); color: white; overflow-x: hidden; }
+
+        /* --- LOGIN SCREEN --- */
+        #auth-screen {
+            position: fixed; width: 100%; height: 100%; background: radial-gradient(circle, #0d1a17, #050608);
+            display: flex; align-items: center; justify-content: center; z-index: 10000;
+        }
+        .auth-card {
+            background: rgba(255,255,255,0.03); padding: 40px; border-radius: 30px;
+            border: 1px solid var(--neon); text-align: center; width: 90%; max-width: 400px;
+            backdrop-filter: blur(20px); box-shadow: 0 0 30px rgba(0, 255, 204, 0.15);
+        }
+        .logo { font-family: 'Orbitron'; font-size: 2.5rem; color: var(--neon); text-shadow: 0 0 15px var(--neon); margin-bottom: 30px; }
+        input {
+            width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid #222;
+            background: #000; color: white; outline: none; transition: 0.3s;
+        }
+        input:focus { border-color: var(--neon); box-shadow: 0 0 10px rgba(0, 255, 204, 0.2); }
+        .btn-glow {
+            width: 100%; padding: 16px; border-radius: 12px; border: none; background: var(--neon);
+            color: black; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; transition: 0.3s;
+        }
+
+        /* --- DASHBOARD LAYOUT --- */
+        .container { max-width: 500px; margin: 0 auto; padding: 20px; padding-bottom: 120px; }
+        
+        .ad-banner {
+            width: 100%; min-height: 100px; background: #000; margin: 20px 0;
+            border: 1px solid #222; border-radius: 15px; display: flex; flex-direction: column;
+            align-items: center; justify-content: center; overflow: hidden;
+        }
+
+        .header-box {
+            background: var(--card-bg); padding: 20px; border-radius: 25px;
+            display: flex; justify-content: space-between; align-items: center;
+            border: 1px solid #1e1f26;
+        }
+        .player-info { display: flex; align-items: center; gap: 15px; }
+        .avatar-frame img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--neon); }
+        .coin-display { background: rgba(255, 215, 0, 0.1); color: var(--gold); padding: 8px 15px; border-radius: 50px; border: 1px solid var(--gold); }
+
+        /* --- GAME GRID SYSTEM --- */
+        .section-title { font-family: 'Orbitron'; color: var(--neon); margin: 25px 0 15px; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px; }
+        
+        .game-grid {
+            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
+        }
+        .game-card {
+            background: var(--card-bg); border-radius: 20px; padding: 10px;
+            border: 1px solid #1e1f26; transition: 0.3s; text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+        .game-card:hover { border-color: var(--neon); transform: translateY(-5px); }
+        .game-icon {
+            width: 100%; aspect-ratio: 1/1; border-radius: 15px;
+            object-fit: cover; margin-bottom: 10px;
+            background: #1a1b22;
+        }
+        .game-name { font-size: 0.8rem; font-weight: bold; margin-bottom: 8px; color: #eee; height: 2.4em; overflow: hidden; }
+        .play-now-btn {
+            background: var(--neon); color: #000; border: none; width: 100%;
+            padding: 8px; border-radius: 10px; font-weight: bold; cursor: pointer;
+            font-size: 0.7rem; font-family: 'Orbitron';
+        }
+
+        /* --- GAME PLAYER OVERLAY --- */
+        #game-view {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: #000; z-index: 30000; display: none; flex-direction: column;
+        }
+        .close-game {
+            background: #ff4444; color: white; padding: 10px 20px; font-weight: bold;
+            border: none; cursor: pointer; text-align: center; font-family: 'Orbitron';
+        }
+        #game-frame { flex: 1; border: none; width: 100%; height: 100%; }
+
+        /* Reward Section */
+        .reward-card {
+            background: linear-gradient(145deg, #0a0b0e, #13151b); border: 2px solid var(--neon);
+            padding: 30px; border-radius: 30px; margin-top: 40px; text-align: center;
+        }
+        .timer-text { font-size: 2rem; font-weight: bold; color: var(--gold); margin: 10px 0; font-family: 'Orbitron'; }
+        .spin-btn { 
+            background: var(--gold); color: #000; padding: 15px; border-radius: 50px; 
+            border: none; font-weight: bold; cursor: pointer; width: 100%;
+        }
+
+        /* Bottom Nav */
+        .nav-bar {
+            position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); 
+            width: 100%; max-width: 500px; background: #0a0b0f;
+            display: flex; justify-content: space-around; padding: 15px;
+            border-top: 1px solid #1e1f26; z-index: 999;
+        }
+        .nav-link { font-size: 1.5rem; color: #444; }
+        .nav-link.active { color: var(--neon); }
+
+        /* Settings Overlay */
+        #settings-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95);
+            z-index: 40000; display: none; align-items: center; justify-content: center;
+        }
+        .settings-content { background: #0f1015; padding: 30px; border-radius: 30px; width: 85%; max-width: 400px; border: 1px solid var(--neon); }
+    </style>
+</head>
+<body>
+
+    <!-- AUTH SECTION -->
+    <div id="auth-screen">
+        <div class="auth-card">
+            <h1 class="logo">POLY GAMER</h1>
+            <input type="text" id="user-name-inp" placeholder="Player Name">
+            <input type="email" id="user-email-inp" placeholder="Email Address">
+            <input type="tel" id="user-phone-inp" placeholder="Phone Number">
+            <button class="btn-glow" onclick="startVerification()">LOGIN SYSTEM</button>
+        </div>
+    </div>
+
+    <!-- MAIN DASHBOARD -->
+    <div class="container" id="dashboard" style="display:none;">
+        
+        <header class="header-box">
+            <div class="player-info">
+                <img id="main-avatar" src="https://api.dicebear.com/7.x/adventurer/svg?seed=Lucky" alt="pfp">
+                <div>
+                    <h3 id="display-name" style="font-size: 0.9rem;">Player</h3>
+                    <small style="color: var(--neon);">ELITE MEMBER</small>
+                </div>
+            </div>
+            <div class="coin-display">💰 <span id="coin-val">0</span></div>
+        </header>
+
+        <!-- AD -->
+        <div class="ad-banner">
+            <small style="color:#333">SPONSORED</small>
+            <script type="text/javascript">
+                atOptions = {'key' : '9aadc22c97e263ed5aeee76588698489','format' : 'iframe','height' : 50,'width' : 320,'params' : {}};
+            </script>
+            <script type="text/javascript" src="https://www.highrevenueformat.com/9aadc22c97e263ed5aeee76588698489/invoke.js"></script>
+        </div>
+
+        <!-- GAMES SECTION -->
+        <h2 class="section-title">Mission Hub</h2>
+        <div class="game-grid" id="game-container">
+            <!-- Games will be injected here by JS -->
+        </div>
+
+        <!-- REWARD SYSTEM -->
+        <div class="reward-card">
+            <h3 style="font-family:'Orbitron'; color:var(--neon);">SURVIVAL BONUS</h3>
+            <div class="timer-text" id="live-timer">00:00</div>
+            <button class="spin-btn" id="spin-btn" disabled onclick="handleSpin()">SPIN NOW</button>
+        </div>
+
+    </div>
+
+    <!-- FULLSCREEN GAME PLAYER -->
+    <div id="game-view">
+        <button class="close-game" onclick="closeGame()">CLOSE GAME ×</button>
+        <iframe id="game-frame" src=""></iframe>
+    </div>
+
+    <!-- SETTINGS MODAL -->
+    <div id="settings-overlay">
+        <div class="settings-content">
+            <h3 style="font-family:'Orbitron'; color:var(--neon); margin-bottom: 20px;">SETTINGS</h3>
+            <input type="file" id="pic-input" accept="image/*" onchange="previewAvatar(this)">
+            <input type="text" id="edit-name" placeholder="Update Name">
+            <button class="btn-glow" onclick="saveAccount()">UPDATE</button>
+            <p onclick="closeSettings()" style="margin-top:20px; color:#444; cursor:pointer;">Close</p>
+        </div>
+    </div>
+
+    <!-- BOTTOM NAV -->
+    <nav class="nav-bar" id="nav-bar" style="display:none;">
+        <div class="nav-link active">🏠</div>
+        <div class="nav-link" onclick="alert('Leaderboard coming soon!')">🏆</div>
+        <div class="nav-link" onclick="openSettings()">👤</div>
+    </nav>
+
+    <script>
+        // --- Game Data (28 Games Total) ---
+        const games = [
+            // Original Games
+            { id: "1", name: "Drift Hunters", url: "https://html5.gamedistribution.com/4254dba037de4b798541d2c97eae5016/", img: "drift_hunters.png" },
+            { id: "2", name: "Madalin Stunt Cars", url: "https://html5.gamedistribution.com/c6d324c4729f48ef9a3cd8882bdf078e/", img: "madalin_stunt_cars.png" },
+            { id: "3", name: "Moto X3M Pool", url: "https://html5.gamedistribution.com/1e850284c3ef4ca5bdb1614b430ed1fa/", img: "moto_x3m_pool.png" },
+            { id: "4", name: "Bus Rally", url: "https://html5.gamedistribution.com/2fc4137f4e9c4c69a6d2b0eca1b124a4/", img: "bus_rally.png" },
+            { id: "5", name: "Tank Off", url: "https://html5.gamedistribution.com/1011183f1ce348f0a3735476f5523302/", img: "tank_off.png" },
+            { id: "6", name: "Cyber Surfer", url: "https://html5.gamedistribution.com/46d7f505813c4b4285c47579542df3ab/", img: "cyber_surfer.png" },
+            { id: "7", name: "Offroad Derby", url: "https://html5.gamedistribution.com/23b2fe26392247f49fb73598a5797e16/", img: "offroad_derby.png" },
+            { id: "8", name: "Top Speed Racing", url: "https://html5.gamedistribution.com/bdcc1af7f5cb4044a969d54826fe0a4d/", img: "top_speed_racing.png" },
+            { id: "9", name: "Traffic Jam 3D", url: "https://html5.gamedistribution.com/f56ea48b72e84a3f8fefc7dee2910e25/", img: "traffic_jam_3d.png" },
+            { id: "10", name: "City Car Driver", url: "https://html5.gamedistribution.com/120fda26e1c4427c919937bec69d57df/", img: "city_car_driver.png" },
+            { id: "11", name: "Evo City Driving", url: "https://html5.gamedistribution.com/36ec3da3394e42bb8e1f7c49469cbbfd/", img: "evo_city_driving.png" },
+            { id: "12", name: "Extreme Moto", url: "https://html5.gamedistribution.com/7801fdfb4dd24e72a8c9d663a973472f/", img: "extreme_moto.png" },
+            { id: "13", name: "Hill Climb Race", url: "https://html5.gamedistribution.com/ceccfc14ea414640840979ab92790710/", img: "hill_climb_race.png" },
+            { id: "14", name: "Scorpio Simulator", url: "https://html5.gamedistribution.com/451e0b2249e1444c8a43a5a545b96a86/", img: "scorpio_simulator.png" },
+            
+            // New Added Games from your Iframes
+            { id: "15", name: "Subway Runner", url: "https://html5.gamedistribution.com/ab2f156d72894fd8a5dedb85b34a05e4/", img: "subway_runner.png" },
+            { id: "16", name: "Archer Hero", url: "https://html5.gamedistribution.com/13eabea86f7c4cd993a156258420e9ec/", img: "archer_hero.png" },
+            { id: "17", name: "Combat Mission", url: "https://html5.gamedistribution.com/d64ecb1fa38042b89e02cd69faa0078f/", img: "combat_mission.png" },
+            { id: "18", name: "Furious Road", url: "https://html5.gamedistribution.com/7ad8fee4eccb422aa1fcbf9c2038cdc7/", img: "furious_road.png" },
+            { id: "19", name: "Paper Flight", url: "https://html5.gamedistribution.com/1001ff07ca9f412c907b9d161dddb269/", img: "paper_flight.png" },
+            { id: "20", name: "Ramp Car Stunts", url: "https://html5.gamedistribution.com/bb9d9c797133411385adc3b8e60e6583/", img: "ramp_car_stunts.png" },
+            { id: "21", name: "City Bike Rider", url: "https://html5.gamedistribution.com/a2c4c522271f4d7b88157101f847f9b2/", img: "city_bike_rider.png" },
+            { id: "22", name: "Super Sniper", url: "https://html5.gamedistribution.com/78056fce3de343b4bdebeaece5a65ad7/", img: "super_sniper.png" },
+            { id: "23", name: "Stunt Bike Elite", url: "https://html5.gamedistribution.com/828864726be944c2bff67fa68d505e96/", img: "stunt_bike_elite.png" },
+            { id: "24", name: "Ultimate Car Sim", url: "https://html5.gamedistribution.com/9bde41f232834eff9ea81554ecee8279/", img: "ultimate_car_sim.png" },
+            { id: "25", name: "Moto Trials", url: "https://html5.gamedistribution.com/cecfade6d8ef4fb7a4b1924452da4204/", img: "moto_trials.png" },
+            { id: "26", name: "Police Chase", url: "https://html5.gamedistribution.com/e779cdcaf9ee4dfe97b8df28e282a3e1/", img: "police_chase.png" },
+            { id: "27", name: "Neon Biker", url: "https://html5.gamedistribution.com/670fce13db0d4edbb396fa155db80f11/", img: "neon_biker.png" },
+            { id: "28", name: "Truck Driver 3D", url: "https://html5.gamedistribution.com/f3ee6674b4ea4579aeefd54d7bf388f0/", img: "truck_driver_3d.png" }
+        ];
+
+        let playerStats = { coins: 0, timeActive: 0 };
+
+        // Render Games
+        function renderGames() {
+            const container = document.getElementById('game-container');
+            container.innerHTML = ""; 
+            games.forEach(game => {
+                container.innerHTML += `
+                    <div class="game-card">
+                        <img src="${game.img}" class="game-icon" alt="${game.name}" onerror="this.src='https://via.placeholder.com/150/111/00ffcc?text=No+Image'">
+                        <div class="game-name">${game.name}</div>
+                        <button class="play-now-btn" onclick="openGame('${game.url}')">PLAY NOW</button>
+                    </div>
+                `;
+            });
+        }
+
+        function openGame(url) {
+            document.getElementById('game-frame').src = url;
+            document.getElementById('game-view').style.display = 'flex';
+        }
+
+        function closeGame() {
+            document.getElementById('game-view').style.display = 'none';
+            document.getElementById('game-frame').src = "";
+        }
+
+        function startVerification() {
+            const name = document.getElementById('user-name-inp').value;
+            if(name.length < 3) return alert("Enter valid name!");
+            
+            let otp = Math.floor(1000 + Math.random() * 9000);
+            alert("Your Security OTP: " + otp);
+            let userOtp = prompt("Enter OTP:");
+            if(userOtp == otp) loginPlayer(name);
+        }
+
+        function loginPlayer(name) {
+            document.getElementById('auth-screen').style.display = 'none';
+            document.getElementById('dashboard').style.display = 'block';
+            document.getElementById('nav-bar').style.display = 'flex';
+            document.getElementById('display-name').innerText = name.toUpperCase();
+            playerStats.coins = 100;
+            document.getElementById('coin-val').innerText = playerStats.coins;
+            renderGames();
+            startTimer();
+        }
+
+        function startTimer() {
+            setInterval(() => {
+                playerStats.timeActive++;
+                let m = Math.floor(playerStats.timeActive / 60);
+                let s = playerStats.timeActive % 60;
+                document.getElementById('live-timer').innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+                if(playerStats.timeActive >= 600) {
+                    document.getElementById('spin-btn').disabled = false;
+                    document.getElementById('spin-btn').innerText = "SPIN UNLOCKED";
+                }
+            }, 1000);
+        }
+
+        function handleSpin() {
+            let win = Math.floor(Math.random() * 5000) + 500;
+            playerStats.coins += win;
+            document.getElementById('coin-val').innerText = playerStats.coins;
+            alert("You Won 💰" + win + " Coins!");
+            playerStats.timeActive = 0;
+            document.getElementById('spin-btn').disabled = true;
+        }
+
+        function openSettings() { document.getElementById('settings-overlay').style.display = 'flex'; }
+        function closeSettings() { document.getElementById('settings-overlay').style.display = 'none'; }
+        function previewAvatar(i) { if (i.files[0]) { let r = new FileReader(); r.onload = (e) => document.getElementById('main-avatar').src = e.target.result; r.readAsDataURL(i.files[0]); } }
+        function saveAccount() { closeSettings(); alert("Profile Updated!"); }
+    </script>
+
+    <!-- Ad Network Bar -->
+    <script src="https://pl31096702.profitableratecpmnetwork.com/4e/f1/a2/4ef1a2c322adf1fb32b1ad0cf8a54ff2.js"></script>
+
+</body>
+</html>
