@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://winindia.github.io/Win-India/sitemap.xml
