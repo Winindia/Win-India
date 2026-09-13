@@ -11,7 +11,7 @@
     <title>POLY GAMER | Pro Player Hub</title>
     
     <!-- Fonts -->
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
     
     <!-- Supabase JS CDN -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -19,80 +19,396 @@
     <style>
         :root {
             --neon: #00ffcc;
-            --dark-bg: #050608;
-            --card-bg: #0f1015;
+            --neon-pink: #ff007f;
+            --neon-purple: #8b00ff;
+            --dark-bg: #05020c;
+            --card-bg: rgba(15, 8, 30, 0.85);
             --gold: #ffd700;
+            --text-color: #ffffff;
+            --border-color: rgba(0, 255, 204, 0.25);
+            --header-bg: rgba(9, 4, 18, 0.95);
+        }
+
+        /* Light Theme overrides */
+        body.light-theme {
+            --dark-bg: #f5f3fa;
+            --card-bg: rgba(255, 255, 255, 0.92);
+            --text-color: #1e0a3d;
+            --border-color: rgba(255, 0, 127, 0.4);
+            --header-bg: rgba(255, 255, 255, 0.98);
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
-        body { background: var(--dark-bg); color: white; overflow-x: hidden; }
+        
+        body { 
+            background: var(--dark-bg); 
+            color: var(--text-color); 
+            overflow-x: hidden;
+            background-image: 
+                radial-gradient(circle at 50% 10%, rgba(139, 0, 255, 0.25) 0%, transparent 60%),
+                radial-gradient(circle at 90% 80%, rgba(0, 255, 204, 0.15) 0%, transparent 60%);
+            background-attachment: fixed;
+            transition: background 0.3s ease, color 0.3s ease;
+        }
 
-        /* --- LOGIN SCREEN --- */
+        /* Synthwave Grid Background Layer */
+        .cyber-grid {
+            position: fixed;
+            top: 0; left: 0; width: 200%; height: 200%;
+            background-image: 
+                linear-gradient(rgba(0, 255, 204, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 255, 204, 0.04) 1px, transparent 1px);
+            background-size: 50px 50px;
+            transform: perspective(600px) rotateX(60deg) translateY(-30%);
+            animation: gridScroll 12s linear infinite;
+            z-index: -2;
+            opacity: 0.8;
+            pointer-events: none;
+        }
+
+        @keyframes gridScroll {
+            0% { transform: perspective(600px) rotateX(60deg) translateY(-30%); }
+            100% { transform: perspective(600px) rotateX(60deg) translateY(0%); }
+        }
+
+        /* --- PRE-HEADER QUICK OPTIONS BAR --- */
+        .top-action-bar {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: var(--header-bg);
+            border-bottom: 2px solid var(--border-color);
+            border-radius: 0 0 18px 18px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .top-left-actions {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .action-icon {
+            font-size: 1.3rem;
+            cursor: pointer;
+            transition: transform 0.2s, text-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        .action-icon:hover {
+            transform: scale(1.15);
+        }
+
+        .top-timer-display {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 700;
+            font-size: 0.85rem;
+            color: var(--gold);
+            text-shadow: 0 0 8px rgba(255, 215, 0, 0.4);
+        }
+
+        .withdraw-action-btn {
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.75rem;
+            font-weight: 900;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(255, 0, 127, 0.4);
+            transition: 0.3s;
+        }
+        .withdraw-action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 18px rgba(255, 0, 127, 0.7);
+        }
+
+        /* --- IMMERSIVE OVERLAYS --- */
         #auth-screen {
-            position: fixed; width: 100%; height: 100%; background: radial-gradient(circle, #0d1a17, #050608);
-            display: flex; align-items: center; justify-content: center; z-index: 10000;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(4, 2, 10, 0.96);
+            display: flex; align-items: center; justify-content: center; z-index: 10005;
+            backdrop-filter: blur(25px);
+            transition: all 0.4s ease-in-out;
         }
+        
         .auth-card {
-            background: rgba(255,255,255,0.03); padding: 40px; border-radius: 30px;
-            border: 1px solid var(--neon); text-align: center; width: 90%; max-width: 400px;
-            backdrop-filter: blur(20px); box-shadow: 0 0 30px rgba(0, 255, 204, 0.15);
+            background: rgba(18, 9, 36, 0.95); 
+            padding: 40px 30px; 
+            border-radius: 28px;
+            border: 2px solid var(--neon-pink); 
+            text-align: center; 
+            width: 90%; 
+            max-width: 440px;
+            position: relative;
+            box-shadow: 0 0 50px rgba(255, 0, 127, 0.4), inset 0 0 25px rgba(255, 0, 127, 0.15);
+            animation: cardEntrance 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .logo { font-family: 'Orbitron'; font-size: 2.5rem; color: var(--neon); text-shadow: 0 0 15px var(--neon); margin-bottom: 30px; }
-        input {
-            width: 100%; padding: 15px; margin: 10px 0; border-radius: 12px; border: 1px solid #222;
-            background: #000; color: white; outline: none; transition: 0.3s;
+
+        @keyframes cardEntrance {
+            from { transform: translateY(40px) scale(0.9); opacity: 0; }
+            to { transform: translateY(0) scale(1); opacity: 1; }
         }
-        input:focus { border-color: var(--neon); box-shadow: 0 0 10px rgba(0, 255, 204, 0.2); }
+
+        .close-auth {
+            position: absolute;
+            top: 15px; right: 20px;
+            font-size: 2.2rem; color: #ff3366; cursor: pointer;
+            font-weight: bold; transition: 0.3s;
+        }
+        .close-auth:hover { transform: scale(1.2); text-shadow: 0 0 15px #ff3366; }
+
+        .logo { 
+            font-family: 'Orbitron', sans-serif; 
+            font-weight: 900;
+            font-size: 2.8rem; 
+            background: linear-gradient(45deg, var(--neon), var(--neon-pink));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 30px rgba(0, 255, 204, 0.5); 
+            margin-bottom: 5px; 
+            letter-spacing: 3px;
+        }
+        
+        .logo-subtitle {
+            font-family: 'Rajdhani', sans-serif;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            opacity: 0.8;
+            text-transform: uppercase;
+            letter-spacing: 6px;
+            margin-bottom: 30px;
+        }
+
+        .auth-card input {
+            width: 100%; padding: 16px; margin: 12px 0; border-radius: 14px; 
+            border: 2px solid rgba(255, 255, 255, 0.08);
+            background: rgba(0, 0, 0, 0.8); color: white; outline: none; 
+            font-family: 'Rajdhani', sans-serif; font-size: 1.15rem;
+            letter-spacing: 1px; transition: 0.3s;
+        }
+        .auth-card input:focus { 
+            border-color: var(--neon); 
+            box-shadow: 0 0 20px rgba(0, 255, 204, 0.5); 
+        }
+
         .btn-glow {
-            width: 100%; padding: 16px; border-radius: 12px; border: none; background: var(--neon);
-            color: black; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; transition: 0.3s;
+            width: 100%; padding: 18px; border-radius: 14px; border: none; 
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+            color: white; font-weight: 900; cursor: pointer; 
+            font-family: 'Orbitron', sans-serif; font-size: 1.05rem;
+            letter-spacing: 1.5px; transition: 0.3s;
+            box-shadow: 0 5px 25px rgba(255, 0, 127, 0.45);
+            text-transform: uppercase;
+        }
+        .btn-glow:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 30px rgba(255, 0, 127, 0.7);
         }
         .btn-glow:disabled {
-            background: #222;
-            color: #666;
+            background: #251b35;
+            color: #665c7a;
             cursor: not-allowed;
+            box-shadow: none;
         }
 
         /* --- DASHBOARD LAYOUT --- */
-        .container { max-width: 500px; margin: 0 auto; padding: 20px; padding-bottom: 120px; }
+        .container { max-width: 500px; margin: 0 auto; padding: 15px; padding-bottom: 120px; position: relative; }
+
+        /* BOSS NOTIFICATION MESSAGE CONSOLE */
+        .boss-console-box {
+            background: linear-gradient(90deg, #100524, #080312);
+            border: 1px solid var(--neon);
+            border-radius: 14px;
+            padding: 12px 16px;
+            margin: 15px 0 10px;
+            font-family: 'Orbitron', sans-serif;
+            font-size: 0.8rem;
+            color: var(--neon);
+            text-shadow: 0 0 5px rgba(0, 255, 204, 0.5);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 0 15px rgba(0, 255, 204, 0.15);
+        }
+        .boss-avatar-glow {
+            width: 28px; height: 28px;
+            border-radius: 50%;
+            background: var(--neon-pink);
+            display: flex; align-items: center; justify-content: center;
+            font-weight: 900; color: white;
+            font-size: 0.75rem;
+            box-shadow: 0 0 8px var(--neon-pink);
+        }
+        .boss-message-text {
+            flex: 1;
+            font-weight: 700;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
         
         .ad-banner {
-            width: 100%; min-height: 100px; background: #000; margin: 20px 0;
-            border: 1px solid #222; border-radius: 15px; display: flex; flex-direction: column;
+            width: 100%; min-height: 80px; background: rgba(12, 5, 26, 0.8); margin: 15px 0;
+            border: 1px solid rgba(0, 255, 204, 0.15); border-radius: 18px; display: flex; flex-direction: column;
             align-items: center; justify-content: center; overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0, 255, 204, 0.05);
         }
 
         .header-box {
-            background: var(--card-bg); padding: 20px; border-radius: 25px;
+            background: var(--card-bg); padding: 18px; border-radius: 24px;
             display: flex; justify-content: space-between; align-items: center;
-            border: 1px solid #1e1f26;
+            border: 1px solid var(--border-color);
+            box-shadow: 0 12px 30px rgba(0,0,0,0.5);
+            backdrop-filter: blur(12px);
         }
-        .player-info { display: flex; align-items: center; gap: 15px; }
-        .avatar-frame img { width: 60px; height: 60px; border-radius: 50%; border: 2px solid var(--neon); }
-        .coin-display { background: rgba(255, 215, 0, 0.1); color: var(--gold); padding: 8px 15px; border-radius: 50px; border: 1px solid var(--gold); }
+        .player-info { display: flex; align-items: center; gap: 12px; }
+        .avatar-frame { position: relative; }
+        .avatar-frame img { 
+            width: 52px; height: 52px; border-radius: 50%; 
+            border: 2px solid var(--neon-pink); 
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.4);
+        }
+        .avatar-frame::after {
+            content: "LIVE";
+            position: absolute; bottom: -3px; right: -3px;
+            background: var(--neon); color: black;
+            font-size: 0.52rem; font-weight: 900; font-family: 'Orbitron';
+            padding: 1px 5px; border-radius: 6px;
+            box-shadow: 0 0 8px var(--neon);
+        }
+        
+        .player-text h3 {
+            font-family: 'Rajdhani', sans-serif;
+            font-weight: 700;
+            letter-spacing: 0.8px;
+            color: var(--text-color);
+        }
 
-        /* --- GAME GRID SYSTEM --- */
-        .section-title { font-family: 'Orbitron'; color: var(--neon); margin: 25px 0 15px; font-size: 1.2rem; text-transform: uppercase; letter-spacing: 2px; }
+        .coin-display { 
+            background: rgba(255, 215, 0, 0.12); 
+            color: var(--gold); 
+            padding: 8px 16px; 
+            border-radius: 50px; 
+            border: 1.5px solid var(--gold); 
+            font-weight: 900;
+            font-family: 'Orbitron', sans-serif;
+            text-shadow: 0 0 12px rgba(255, 215, 0, 0.4);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.25);
+        }
+
+        /* --- GAME CARD SYSTEM (4 COLUMN GRID) --- */
+        .section-header-wrap {
+            display: flex; justify-content: space-between; align-items: center;
+            margin: 20px 0 12px;
+        }
+        .section-title { 
+            font-family: 'Orbitron', sans-serif; 
+            font-weight: 900;
+            color: var(--text-color); 
+            font-size: 1.1rem; 
+            text-transform: uppercase; 
+            letter-spacing: 1.5px;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .section-title::before {
+            content: "";
+            display: inline-block;
+            width: 5px; height: 18px;
+            background: var(--neon);
+            box-shadow: 0 0 10px var(--neon);
+        }
+
+        .live-tag {
+            background: rgba(255, 0, 127, 0.1);
+            color: var(--neon-pink);
+            border: 1px solid var(--neon-pink);
+            padding: 3px 9px; border-radius: 5px;
+            font-size: 0.65rem; font-weight: bold; font-family: 'Orbitron';
+            animation: pulseGlow 1.5s infinite alternate;
+        }
+        @keyframes pulseGlow {
+            from { box-shadow: 0 0 5px rgba(255,0,127,0.3); }
+            to { box-shadow: 0 0 12px rgba(255,0,127,0.6); }
+        }
         
         .game-grid {
-            display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px;
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 10px;
         }
         .game-card {
-            background: var(--card-bg); border-radius: 20px; padding: 10px;
-            border: 1px solid #1e1f26; transition: 0.3s; text-align: center;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            background: var(--card-bg); border-radius: 16px; padding: 8px;
+            border: 1px solid var(--border-color); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); 
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.4);
+            backdrop-filter: blur(8px);
+            position: relative; overflow: hidden;
         }
-        .game-card:hover { border-color: var(--neon); transform: translateY(-5px); }
-        .game-icon {
-            width: 100%; aspect-ratio: 1/1; border-radius: 15px;
-            object-fit: cover; margin-bottom: 10px;
-            background: #1a1b22;
+        .game-card:hover { 
+            border-color: var(--neon); 
+            transform: translateY(-6px);
+            box-shadow: 0 10px 25px rgba(0, 255, 204, 0.3);
         }
-        .game-name { font-size: 0.8rem; font-weight: bold; margin-bottom: 8px; color: #eee; height: 2.4em; overflow: hidden; }
+
+        /* Highly Optimized Compact Badges */
+        .game-badge {
+            width: 100%;
+            aspect-ratio: 1/1;
+            background: linear-gradient(135deg, rgba(139, 0, 255, 0.35), rgba(0, 255, 204, 0.15));
+            border: 1px dashed var(--neon-pink);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 8px;
+            box-shadow: inset 0 0 12px rgba(0, 255, 204, 0.15);
+        }
+        .badge-text {
+            font-family: 'Orbitron', sans-serif;
+            font-weight: 900;
+            font-size: 1.35rem;
+            color: #fff;
+            text-shadow: 0 0 8px rgba(255, 0, 127, 0.8), 0 0 15px rgba(139, 0, 255, 0.8);
+        }
+
+        .game-name { 
+            font-size: 0.65rem; font-weight: bold; margin-bottom: 8px; color: var(--text-color); 
+            height: 2.4em; overflow: hidden; font-family: 'Rajdhani', sans-serif;
+            text-transform: uppercase; letter-spacing: 0.5px;
+        }
+        
         .play-now-btn {
-            background: var(--neon); color: #000; border: none; width: 100%;
-            padding: 8px; border-radius: 10px; font-weight: bold; cursor: pointer;
-            font-size: 0.7rem; font-family: 'Orbitron';
+            background: linear-gradient(135deg, var(--neon), #00b3ff); color: #000; border: none; width: 100%;
+            padding: 8px; border-radius: 10px; font-weight: 900; cursor: pointer;
+            font-size: 0.6rem; font-family: 'Orbitron', sans-serif;
+            letter-spacing: 0.5px; transition: 0.3s;
+        }
+        .game-card:hover .play-now-btn {
+            background: linear-gradient(135deg, var(--neon-pink), var(--neon-purple));
+            color: #fff;
+        }
+
+        /* --- WITHDRAW & REWARDS MODAL SYSTEM --- */
+        .modal-overlay {
+            position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.92);
+            z-index: 45000; display: none; align-items: center; justify-content: center;
+            backdrop-filter: blur(15px);
+        }
+        .modal-content {
+            background: #0f071a; padding: 35px 25px; border-radius: 28px; width: 85%; max-width: 400px;
+            border: 2px solid var(--neon); text-align: center;
+            box-shadow: 0 0 45px rgba(0, 255, 204, 0.4);
         }
 
         /* --- GAME PLAYER OVERLAY --- */
@@ -100,83 +416,159 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: #000; z-index: 30000; display: none; flex-direction: column;
         }
+        .game-header {
+            background: #090412; padding: 18px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 3px solid var(--neon);
+        }
         .close-game {
-            background: #ff4444; color: white; padding: 10px 20px; font-weight: bold;
+            background: linear-gradient(135deg, #ff3366, #cc0033); color: white; padding: 10px 20px; font-weight: 900;
             border: none; cursor: pointer; text-align: center; font-family: 'Orbitron';
+            border-radius: 10px; box-shadow: 0 0 20px rgba(255, 51, 102, 0.55);
         }
         #game-frame { flex: 1; border: none; width: 100%; height: 100%; }
 
         /* Reward Section */
         .reward-card {
-            background: linear-gradient(145deg, #0a0b0e, #13151b); border: 2px solid var(--neon);
-            padding: 30px; border-radius: 30px; margin-top: 40px; text-align: center;
+            background: linear-gradient(145deg, #100524, #180933); 
+            border: 2px dashed rgba(255, 0, 127, 0.5);
+            padding: 30px 20px; border-radius: 24px; margin-top: 30px; text-align: center;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.7);
         }
-        .timer-text { font-size: 2rem; font-weight: bold; color: var(--gold); margin: 10px 0; font-family: 'Orbitron'; }
+        .timer-text { font-size: 2.2rem; font-weight: 900; color: var(--gold); margin: 8px 0; font-family: 'Orbitron'; }
         .spin-btn { 
-            background: var(--gold); color: #000; padding: 15px; border-radius: 50px; 
-            border: none; font-weight: bold; cursor: pointer; width: 100%;
+            background: linear-gradient(135deg, var(--gold), #ff9900); color: #000; padding: 16px; border-radius: 50px; 
+            border: none; font-weight: 900; cursor: pointer; width: 100%;
+            font-family: 'Orbitron'; letter-spacing: 1.5px;
+            box-shadow: 0 6px 25px rgba(255, 215, 0, 0.35);
+            transition: 0.3s;
+        }
+        .spin-btn:disabled {
+            background: #201730;
+            color: #5d5370;
+            box-shadow: none;
+            cursor: not-allowed;
         }
 
         /* Bottom Nav */
         .nav-bar {
             position: fixed; bottom: 0; left: 50%; transform: translateX(-50%); 
-            width: 100%; max-width: 500px; background: #0a0b0f;
-            display: flex; justify-content: space-around; padding: 15px;
-            border-top: 1px solid #1e1f26; z-index: 999;
+            width: 100%; max-width: 500px; background: rgba(9, 4, 18, 0.96);
+            display: flex; justify-content: space-around; padding: 16px;
+            border-top: 2.5px solid rgba(255, 0, 127, 0.25); z-index: 999;
+            border-radius: 25px 25px 0 0;
+            backdrop-filter: blur(20px);
         }
-        .nav-link { font-size: 1.5rem; color: #444; }
-        .nav-link.active { color: var(--neon); }
+        .nav-link { 
+            font-size: 1.6rem; color: #5a5170; cursor: pointer; transition: 0.3s;
+        }
+        .nav-link.active { 
+            color: var(--neon); 
+            text-shadow: 0 0 15px var(--neon);
+        }
 
         /* Settings Overlay */
         #settings-overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95);
             z-index: 40000; display: none; align-items: center; justify-content: center;
         }
-        .settings-content { background: #0f1015; padding: 30px; border-radius: 30px; width: 85%; max-width: 400px; border: 1px solid var(--neon); }
+        .settings-content { 
+            background: #0f071a; padding: 35px 25px; border-radius: 30px; width: 85%; max-width: 400px; 
+            border: 2px solid var(--neon); text-align: center;
+        }
     </style>
 </head>
 <body>
 
-    <!-- AUTH SECTION -->
-    <div id="auth-screen">
+    <!-- SYNTHWAVE GRID LAYER -->
+    <div class="cyber-grid"></div>
+
+    <!-- PRE-HEADER QUICK ACTION & TIME STATUS -->
+    <div class="top-action-bar">
+        <div class="top-left-actions">
+            <!-- Theme Toggle -->
+            <span class="action-icon" onclick="playBeep('click'); toggleTheme()">🌓</span>
+            <!-- Daily Spin Reward Trigger -->
+            <span class="action-icon" onclick="playBeep('click'); openDailySpinModal()" style="animation: pulseGlow 1s infinite alternate; border-radius:50%;">🎡</span>
+            <!-- Spin Timer Integration (Top) -->
+            <span class="action-icon"><span class="top-timer-display" id="top-timer-display">⏳ 00:00</span></span>
+        </div>
+        <div class="top-right-actions">
+            <!-- Withdraw trigger -->
+            <button class="withdraw-action-btn" onclick="playBeep('click'); openWithdrawModal()">💸 WITHDRAW</button>
+        </div>
+    </div>
+
+    <!-- DAILY SPIN REWARD MODAL -->
+    <div id="daily-spin-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 style="font-family:'Orbitron'; color:var(--neon); margin-bottom:15px;">DAILY LUCKY SPIN</h2>
+            <p style="font-size:0.9rem; margin-bottom:20px; color:#bbb;">Spin the wheel daily to claim direct wallet cash rewards!</p>
+            <button class="btn-glow" id="daily-wheel-btn" onclick="triggerDailySpin()">SPIN WHEEL</button>
+            <p id="daily-spin-status" style="margin-top:20px; font-family:'Orbitron'; font-size:1.1rem; color:var(--gold); font-weight:bold;"></p>
+            <p onclick="closeDailySpinModal()" style="margin-top:25px; color:#ff3366; cursor:pointer; font-weight:bold; font-family:'Orbitron'; font-size:0.85rem;">CLOSE PANEL</p>
+        </div>
+    </div>
+
+    <!-- WITHDRAWAL FORM MODAL -->
+    <div id="withdraw-modal" class="modal-overlay">
+        <div class="modal-content">
+            <h2 style="font-family:'Orbitron'; color:var(--neon-pink); margin-bottom:15px;">SECURE WITHDRAW</h2>
+            <p style="font-size:0.85rem; margin-bottom:15px; color:#aaa;">Instantly withdraw accumulated coins directly to your secure UPI / Wallet node.</p>
+            <input type="text" id="upi-input" placeholder="ENTER UPI ID (e.g. paytm@upi)" style="width:100%; padding:14px; border-radius:12px; background:#000; border:1px solid #333; color:#fff; text-align:center; font-family:'Orbitron'; margin-bottom:12px;">
+            <input type="number" id="withdraw-coins-input" placeholder="AMOUNT OF COINS" style="width:100%; padding:14px; border-radius:12px; background:#000; border:1px solid #333; color:#fff; text-align:center; font-family:'Orbitron'; margin-bottom:20px;">
+            <button class="btn-glow" onclick="processWithdrawal()">CONFIRM WITHDRAWAL</button>
+            <p onclick="closeWithdrawModal()" style="margin-top:25px; color:#ff3366; cursor:pointer; font-weight:bold; font-family:'Orbitron'; font-size:0.85rem;">CLOSE PANEL</p>
+        </div>
+    </div>
+
+    <!-- AUTH SECTION (Modal Popup) -->
+    <div id="auth-screen" style="display: none;">
         <div class="auth-card">
+            <span class="close-auth" onclick="playBeep('click'); closeAuthScreen()">×</span>
             <h1 class="logo">POLY GAMER</h1>
+            <p class="logo-subtitle">Access Command Console</p>
             
-            <!-- STEP 1: Name and Email input -->
             <div id="login-fields">
-                <input type="text" id="user-name-inp" placeholder="Player Name">
-                <input type="email" id="user-email-inp" placeholder="Email Address">
-                <input type="tel" id="user-phone-inp" placeholder="Phone Number (Optional)">
-                <button class="btn-glow" id="login-btn" onclick="startVerification()">SEND OTP</button>
+                <input type="text" id="user-name-inp" placeholder="PLAYER COMMS IDENT">
+                <input type="email" id="user-email-inp" placeholder="EMAIL ADDRESS">
+                <input type="tel" id="user-phone-inp" placeholder="PHONE NUMBER (OPTIONAL)">
+                <button class="btn-glow" id="login-btn" onclick="playBeep('verify'); startVerification()">PROMPT SECURE OTP</button>
             </div>
 
-            <!-- STEP 2: OTP input -->
             <div id="otp-fields" style="display: none;">
-                <p style="color: var(--neon); font-size: 0.9rem; margin-bottom: 15px;">OTP has been sent to your email!</p>
-                <input type="text" id="otp-inp" placeholder="Enter 6-Digit OTP">
-                <button class="btn-glow" id="verify-btn" onclick="verifyOtp()">VERIFY OTP</button>
-                <p onclick="resetAuthScreen()" style="margin-top:20px; color:#ff4444; cursor:pointer; font-size: 0.8rem;">Change Email</p>
+                <p style="color: var(--neon); font-size: 0.95rem; margin-bottom: 20px; font-weight: bold; font-family: 'Orbitron';">OTP TRANSMITTED!</p>
+                <input type="text" id="otp-inp" placeholder="ENTER 6-DIGIT OTP">
+                <button class="btn-glow" id="verify-btn" onclick="playBeep('verify'); verifyOtp()">VERIFY & COMMENCE PLAY</button>
+                <p onclick="playBeep('click'); resetAuthScreen()" style="margin-top:20px; color:#ff3366; cursor:pointer; font-size: 0.85rem; font-weight: bold; text-transform: uppercase; font-family: 'Orbitron';">Back To Profiles</p>
             </div>
         </div>
     </div>
 
     <!-- MAIN DASHBOARD -->
-    <div class="container" id="dashboard" style="display:none;">
+    <div class="container" id="dashboard">
         
         <header class="header-box">
             <div class="player-info">
-                <img id="main-avatar" src="https://api.dicebear.com/7.x/adventurer/svg?seed=Lucky" alt="pfp">
-                <div>
-                    <h3 id="display-name" style="font-size: 0.9rem;">Player</h3>
-                    <small style="color: var(--neon);">ELITE MEMBER</small>
+                <div class="avatar-frame">
+                    <img id="main-avatar" src="https://api.dicebear.com/7.x/adventurer/svg?seed=Lucky" alt="pfp">
+                </div>
+                <div class="player-text">
+                    <h3 id="display-name" style="font-size: 1rem;">GUEST_OPERATOR</h3>
+                    <small style="color: var(--neon-pink); font-family: 'Orbitron'; font-weight: bold; font-size: 0.75rem; letter-spacing: 1px;">ELITE MEMBER</small>
                 </div>
             </div>
-            <div class="coin-display">💰 <span id="coin-val">0</span></div>
+            <div class="coin-display">💰 <span id="coin-val">100</span></div>
         </header>
+
+        <!-- BOSS MESSAGE CONSOLE -->
+        <div class="boss-console-box">
+            <div class="boss-avatar-glow">B</div>
+            <div class="boss-message-text" id="boss-monitor-text">BOSS MONITOR: Establishing secure line...</div>
+        </div>
 
         <!-- AD -->
         <div class="ad-banner">
-            <small style="color:#333">SPONSORED</small>
+            <small style="color:#6d549c; font-family:'Orbitron'; font-size: 0.6rem; letter-spacing: 2px; margin-bottom: 5px;">SPONSORED CAMPAIGN</small>
             <script type="text/javascript">
                 atOptions = {'key' : '9aadc22c97e263ed5aeee76588698489','format' : 'iframe','height' : 50,'width' : 320,'params' : {}};
             </script>
@@ -184,86 +576,148 @@
         </div>
 
         <!-- GAMES SECTION -->
-        <h2 class="section-title">Mission Hub</h2>
+        <div class="section-header-wrap">
+            <h2 class="section-title">Mission Hub</h2>
+            <span class="live-tag">READY STAGE</span>
+        </div>
+        
+        <!-- Highly optimized 4 Columns Grid -->
         <div class="game-grid" id="game-container">
-            <!-- Games will be injected here by JS -->
+            <!-- Games are injected here dynamically -->
         </div>
 
         <!-- REWARD SYSTEM -->
         <div class="reward-card">
-            <h3 style="font-family:'Orbitron'; color:var(--neon);">SURVIVAL BONUS</h3>
+            <h3 style="font-family:'Orbitron'; color:var(--neon); font-size: 1.1rem; letter-spacing: 1px;">SURVIVAL BONUS</h3>
             <div class="timer-text" id="live-timer">00:00</div>
-            <button class="spin-btn" id="spin-btn" disabled onclick="handleSpin()">SPIN NOW</button>
+            <button class="spin-btn" id="spin-btn" disabled onclick="playBeep('verify'); handleSpin()">SPIN BONUS WHEEL</button>
         </div>
 
     </div>
 
     <!-- FULLSCREEN GAME PLAYER -->
     <div id="game-view">
-        <button class="close-game" onclick="closeGame()">CLOSE GAME ×</button>
+        <div class="game-header">
+            <span style="font-family: 'Orbitron'; font-weight: bold; color: var(--neon); letter-spacing: 1px;">SECURE STREAM PORT</span>
+            <button class="close-game" onclick="playBeep('click'); closeGame()">CLOSE GAME ×</button>
+        </div>
         <iframe id="game-frame" src=""></iframe>
     </div>
 
     <!-- SETTINGS MODAL -->
     <div id="settings-overlay">
         <div class="settings-content">
-            <h3 style="font-family:'Orbitron'; color:var(--neon); margin-bottom: 20px;">SETTINGS</h3>
-            <input type="file" id="pic-input" accept="image/*" onchange="previewAvatar(this)">
-            <input type="text" id="edit-name" placeholder="Update Name">
-            <button class="btn-glow" onclick="saveAccount()">UPDATE</button>
-            <p onclick="closeSettings()" style="margin-top:20px; color:#444; cursor:pointer;">Close</p>
+            <h3 style="font-family:'Orbitron'; color:var(--neon); margin-bottom: 25px; letter-spacing: 2px;">AVATAR OVERRIDE</h3>
+            <input type="file" id="pic-input" accept="image/*" onchange="previewAvatar(this)" style="display: none;">
+            <button class="btn-glow" style="margin-bottom: 15px; background: #110524; border: 1.5px solid var(--neon-pink); color: #fff;" onclick="playBeep('click'); document.getElementById('pic-input').click()">UPLOAD AVATAR</button>
+            <input type="text" id="edit-name" placeholder="Update Operator Tag" style="width: 100%; padding: 15px; border-radius: 12px; background: rgba(0,0,0,0.8); border: 1px solid rgba(255,255,255,0.1); color: white; margin-bottom: 15px; text-transform: uppercase; font-family: 'Orbitron'; text-align: center;">
+            <button class="btn-glow" onclick="playBeep('verify'); saveAccount()">SAVE CONFIG</button>
+            <p onclick="playBeep('click'); closeSettings()" style="margin-top:20px; color:#ff3366; cursor:pointer; font-weight: bold; text-transform: uppercase; font-size: 0.85rem; font-family: 'Orbitron';">Close Comms</p>
         </div>
     </div>
 
     <!-- BOTTOM NAV -->
-    <nav class="nav-bar" id="nav-bar" style="display:none;">
-        <div class="nav-link active">🏠</div>
-        <div class="nav-link" onclick="alert('Leaderboard coming soon!')">🏆</div>
-        <div class="nav-link" onclick="openSettings()">👤</div>
+    <nav class="nav-bar" id="nav-bar">
+        <div class="nav-link active" onclick="playBeep('click')">🏠</div>
+        <div class="nav-link" onclick="playBeep('click'); alert('Leaderboards activate on completion of high scores!')">🏆</div>
+        <div class="nav-link" onclick="playBeep('click'); openSettings()">👤</div>
     </nav>
 
     <script>
-        // --- Supabase Config & Initialization ---
+        // --- Web Audio Synthesizer for Immersive Sounds ---
+        function playBeep(type) {
+            try {
+                const ctx = new (window.AudioContext || window.webkitAudioContext)();
+                const osc = ctx.createOscillator();
+                const gain = ctx.createGain();
+                
+                if (type === 'click') {
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(650, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.08, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.08);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.08);
+                } else if (type === 'verify') {
+                    osc.type = 'triangle';
+                    osc.frequency.setValueAtTime(450, ctx.currentTime);
+                    osc.frequency.exponentialRampToValueAtTime(900, ctx.currentTime + 0.25);
+                    gain.gain.setValueAtTime(0.1, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.25);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.25);
+                } else if (type === 'error') {
+                    osc.type = 'sawtooth';
+                    osc.frequency.setValueAtTime(140, ctx.currentTime);
+                    gain.gain.setValueAtTime(0.12, ctx.currentTime);
+                    gain.gain.exponentialRampToValueAtTime(0.01, ctx.currentTime + 0.22);
+                    osc.connect(gain);
+                    gain.connect(ctx.destination);
+                    osc.start();
+                    osc.stop(ctx.currentTime + 0.22);
+                }
+            } catch(e) {}
+        }
+
+        // --- Supabase Config Setup ---
         const supabaseUrl = "https://nsvbdmccafffordzcssn.supabase.co";
         const supabaseKey = "sb_publishable_K2hZYtTcItHVImy6yucPzw_G-jfpjBd";
         const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
 
-        // --- Game Data (28 Games Total) ---
+        // --- Game Registry (28 games) ---
         const games = [
-            { id: "1", name: "Drift Hunters", url: "https://html5.gamedistribution.com/4254dba037de4b798541d2c97eae5016/", img: "drift_hunters.png" },
-            { id: "2", name: "Madalin Stunt Cars", url: "https://html5.gamedistribution.com/c6d324c4729f48ef9a3cd8882bdf078e/", img: "madalin_stunt_cars.png" },
-            { id: "3", name: "Moto X3M Pool", url: "https://html5.gamedistribution.com/1e850284c3ef4ca5bdb1614b430ed1fa/", img: "moto_x3m_pool.png" },
-            { id: "4", name: "Bus Rally", url: "https://html5.gamedistribution.com/2fc4137f4e9c4c69a6d2b0eca1b124a4/", img: "bus_rally.png" },
-            { id: "5", name: "Tank Off", url: "https://html5.gamedistribution.com/1011183f1ce348f0a3735476f5523302/", img: "tank_off.png" },
-            { id: "6", name: "Cyber Surfer", url: "https://html5.gamedistribution.com/46d7f505813c4b4285c47579542df3ab/", img: "cyber_surfer.png" },
-            { id: "7", name: "Offroad Derby", url: "https://html5.gamedistribution.com/23b2fe26392247f49fb73598a5797e16/", img: "offroad_derby.png" },
-            { id: "8", name: "Top Speed Racing", url: "https://html5.gamedistribution.com/bdcc1af7f5cb4044a969d54826fe0a4d/", img: "top_speed_racing.png" },
-            { id: "9", name: "Traffic Jam 3D", url: "https://html5.gamedistribution.com/f56ea48b72e84a3f8fefc7dee2910e25/", img: "traffic_jam_3d.png" },
-            { id: "10", name: "City Car Driver", url: "https://html5.gamedistribution.com/120fda26e1c4427c919937bec69d57df/", img: "city_car_driver.png" },
-            { id: "11", name: "Evo City Driving", url: "https://html5.gamedistribution.com/36ec3da3394e42bb8e1f7c49469cbbfd/", img: "evo_city_driving.png" },
-            { id: "12", name: "Extreme Moto", url: "https://html5.gamedistribution.com/7801fdfb4dd24e72a8c9d663a973472f/", img: "extreme_moto.png" },
-            { id: "13", name: "Hill Climb Race", url: "https://html5.gamedistribution.com/ceccfc14ea414640840979ab92790710/", img: "hill_climb_race.png" },
-            { id: "14", name: "Scorpio Simulator", url: "https://html5.gamedistribution.com/451e0b2249e1444c8a43a5a545b96a86/", img: "scorpio_simulator.png" },
-            { id: "15", name: "Subway Runner", url: "https://html5.gamedistribution.com/ab2f156d72894fd8a5dedb85b34a05e4/", img: "subway_runner.png" },
-            { id: "16", name: "Archer Hero", url: "https://html5.gamedistribution.com/13eabea86f7c4cd993a156258420e9ec/", img: "archer_hero.png" },
-            { id: "17", name: "Combat Mission", url: "https://html5.gamedistribution.com/d64ecb1fa38042b89e02cd69faa0078f/", img: "combat_mission.png" },
-            { id: "18", name: "Furious Road", url: "https://html5.gamedistribution.com/7ad8fee4eccb422aa1fcbf9c2038cdc7/", img: "furious_road.png" },
-            { id: "19", name: "Paper Flight", url: "https://html5.gamedistribution.com/1001ff07ca9f412c907b9d161dddb269/", img: "paper_flight.png" },
-            { id: "20", name: "Ramp Car Stunts", url: "https://html5.gamedistribution.com/bb9d9c797133411385adc3b8e60e6583/", img: "ramp_car_stunts.png" },
-            { id: "21", name: "City Bike Rider", url: "https://html5.gamedistribution.com/a2c4c522271f4d7b88157101f847f9b2/", img: "city_bike_rider.png" },
-            { id: "22", name: "Super Sniper", url: "https://html5.gamedistribution.com/78056fce3de343b4bdebeaece5a65ad7/", img: "super_sniper.png" },
-            { id: "23", name: "Stunt Bike Elite", url: "https://html5.gamedistribution.com/828864726be944c2bff67fa68d505e96/", img: "stunt_bike_elite.png" },
-            { id: "24", name: "Ultimate Car Sim", url: "https://html5.gamedistribution.com/9bde41f232834eff9ea81554ecee8279/", img: "ultimate_car_sim.png" },
-            { id: "25", name: "Moto Trials", url: "https://html5.gamedistribution.com/cecfade6d8ef4fb7a4b1924452da4204/", img: "moto_trials.png" },
-            { id: "26", name: "Police Chase", url: "https://html5.gamedistribution.com/e779cdcaf9ee4dfe97b8df28e282a3e1/", img: "police_chase.png" },
-            { id: "27", name: "Neon Biker", url: "https://html5.gamedistribution.com/670fce13db0d4edbb396fa155db80f11/", img: "neon_biker.png" },
-            { id: "28", name: "Truck Driver 3D", url: "https://html5.gamedistribution.com/f3ee6674b4ea4579aeefd54d7bf388f0/", img: "truck_driver_3d.png" }
+            { id: "1", name: "Drift Hunters", url: "https://html5.gamedistribution.com/4254dba037de4b798541d2c97eae5016/", code: "DH" },
+            { id: "2", name: "Madalin Stunt Cars", url: "https://html5.gamedistribution.com/c6d324c4729f48ef9a3cd8882bdf078e/", code: "MS" },
+            { id: "3", name: "Moto X3M Pool", url: "https://html5.gamedistribution.com/1e850284c3ef4ca5bdb1614b430ed1fa/", code: "MX" },
+            { id: "4", name: "Bus Rally", url: "https://html5.gamedistribution.com/2fc4137f4e9c4c69a6d2b0eca1b124a4/", code: "BR" },
+            { id: "5", name: "Tank Off", url: "https://html5.gamedistribution.com/1011183f1ce348f0a3735476f5523302/", code: "TO" },
+            { id: "6", name: "Cyber Surfer", url: "https://html5.gamedistribution.com/46d7f505813c4b4285c47579542df3ab/", code: "CS" },
+            { id: "7", name: "Offroad Derby", url: "https://html5.gamedistribution.com/23b2fe26392247f49fb73598a5797e16/", code: "OD" },
+            { id: "8", name: "Top Speed Racing", url: "https://html5.gamedistribution.com/bdcc1af7f5cb4044a969d54826fe0a4d/", code: "TS" },
+            { id: "9", name: "Traffic Jam 3D", url: "https://html5.gamedistribution.com/f56ea48b72e84a3f8fefc7dee2910e25/", code: "TJ" },
+            { id: "10", name: "City Car Driver", url: "https://html5.gamedistribution.com/120fda26e1c4427c919937bec69d57df/", code: "CC" },
+            { id: "11", name: "Evo City Driving", url: "https://html5.gamedistribution.com/36ec3da3394e42bb8e1f7c49469cbbfd/", code: "EC" },
+            { id: "12", name: "Extreme Moto", url: "https://html5.gamedistribution.com/7801fdfb4dd24e72a8c9d663a973472f/", code: "EM" },
+            { id: "13", name: "Hill Climb Race", url: "https://html5.gamedistribution.com/ceccfc14ea414640840979ab92790710/", code: "HC" },
+            { id: "14", name: "Scorpio Simulator", url: "https://html5.gamedistribution.com/451e0b2249e1444c8a43a5a545b96a86/", code: "SS" },
+            { id: "15", name: "Subway Runner", url: "https://html5.gamedistribution.com/ab2f156d72894fd8a5dedb85b34a05e4/", code: "SR" },
+            { id: "16", name: "Archer Hero", url: "https://html5.gamedistribution.com/13eabea86f7c4cd993a156258420e9ec/", code: "AH" },
+            { id: "17", name: "Combat Mission", url: "https://html5.gamedistribution.com/d64ecb1fa38042b89e02cd69faa0078f/", code: "CM" },
+            { id: "18", name: "Furious Road", url: "https://html5.gamedistribution.com/7ad8fee4eccb422aa1fcbf9c2038cdc7/", code: "FR" },
+            { id: "19", name: "Paper Flight", url: "https://html5.gamedistribution.com/1001ff07ca9f412c907b9d161dddb269/", code: "PF" },
+            { id: "20", name: "Ramp Car Stunts", url: "https://html5.gamedistribution.com/bb9d9c797133411385adc3b8e60e6583/", code: "RC" },
+            { id: "21", name: "City Bike Rider", url: "https://html5.gamedistribution.com/a2c4c522271f4d7b88157101f847f9b2/", code: "CB" },
+            { id: "22", name: "Super Sniper", url: "https://html5.gamedistribution.com/78056fce3de343b4bdebeaece5a65ad7/", code: "SN" },
+            { id: "23", name: "Stunt Bike Elite", url: "https://html5.gamedistribution.com/828864726be944c2bff67fa68d505e96/", code: "SB" },
+            { id: "24", name: "Ultimate Car Sim", url: "https://html5.gamedistribution.com/9bde41f232834eff9ea81554ecee8279/", code: "UC" },
+            { id: "25", name: "Moto Trials", url: "https://html5.gamedistribution.com/cecfade6d8ef4fb7a4b1924452da4204/", code: "MT" },
+            { id: "26", name: "Police Chase", url: "https://html5.gamedistribution.com/e779cdcaf9ee4dfe97b8df28e282a3e1/", code: "PC" },
+            { id: "27", name: "Neon Biker", url: "https://html5.gamedistribution.com/670fce13db0d4edbb396fa155db80f11/", code: "NB" },
+            { id: "28", name: "Truck Driver 3D", url: "https://html5.gamedistribution.com/f3ee6674b4ea4579aeefd54d7bf388f0/", code: "TD" }
         ];
 
-        let playerStats = { coins: 0, timeActive: 0 };
+        // Boss notifications array
+        const bossMessages = [
+            "BOSS: Finish missions to claim heavy payouts!",
+            "BOSS: UPI instant withdraw enabled above!",
+            "BOSS: Spin the Daily Lucky Wheel for 1000+ coins!",
+            "BOSS: Stay alert! High yield sessions detected!",
+            "BOSS: Mission milestones unlocked in Drift Hunters!"
+        ];
 
-        // ऑटो-लॉगिन चेक (यदि पहले से सेशन एक्टिव है)
+        let playerStats = { coins: 100, timeActive: 0 };
+        let isLoggedIn = false;
+        let pendingGameUrl = "";
+
         window.addEventListener('DOMContentLoaded', async () => {
+            renderGames();
+            startTimer();
+            initializeBossConsole();
+
             const { data: { session } } = await supabaseClient.auth.getSession();
             if (session && session.user) {
                 const email = session.user.email;
@@ -272,24 +726,92 @@
             }
         });
 
-        // Render Games
+        // Theme Switch Handler (Dark / Light)
+        function toggleTheme() {
+            document.body.classList.toggle('light-theme');
+            playBeep('click');
+        }
+
+        // --- Withdraw Controls ---
+        function openWithdrawModal() {
+            document.getElementById('withdraw-modal').style.display = 'flex';
+        }
+        function closeWithdrawModal() {
+            document.getElementById('withdraw-modal').style.display = 'none';
+        }
+        function processWithdrawal() {
+            const upi = document.getElementById('upi-input').value.trim();
+            const val = parseInt(document.getElementById('withdraw-coins-input').value);
+            if (!upi.includes('@')) {
+                playBeep('error');
+                return alert("Boss System alert: Please provide a valid UPI link node!");
+            }
+            if (!val || val <= 0 || val > playerStats.coins) {
+                playBeep('error');
+                return alert("Boss System alert: Insufficient coin balance on profile node!");
+            }
+            playerStats.coins -= val;
+            document.getElementById('coin-val').innerText = playerStats.coins;
+            playBeep('verify');
+            alert(`SUCCESS: Node withdrawal of ${val} coins registered to UPI node: ${upi}`);
+            closeWithdrawModal();
+        }
+
+        // --- Daily Spin Reward Flow ---
+        function openDailySpinModal() {
+            document.getElementById('daily-spin-modal').style.display = 'flex';
+        }
+        function closeDailySpinModal() {
+            document.getElementById('daily-spin-modal').style.display = 'none';
+        }
+        function triggerDailySpin() {
+            const btn = document.getElementById('daily-wheel-btn');
+            btn.disabled = true;
+            btn.innerText = "SPINNING NODE...";
+            
+            setTimeout(() => {
+                let prize = Math.floor(Math.random() * 2500) + 750;
+                playerStats.coins += prize;
+                document.getElementById('coin-val').innerText = playerStats.coins;
+                document.getElementById('daily-spin-status').innerText = `WINNER! Claimed +💰${prize} Coins!`;
+                playBeep('verify');
+                btn.innerText = "SPIN COMPLETE";
+            }, 1800);
+        }
+
+        // --- Active Monitoring Console (Boss Log) ---
+        function initializeBossConsole() {
+            let index = 0;
+            setInterval(() => {
+                document.getElementById('boss-monitor-text').innerText = bossMessages[index];
+                index = (index + 1) % bossMessages.length;
+            }, 5000);
+        }
+
         function renderGames() {
             const container = document.getElementById('game-container');
             container.innerHTML = ""; 
             games.forEach(game => {
                 container.innerHTML += `
                     <div class="game-card">
-                        <img src="${game.img}" class="game-icon" alt="${game.name}" onerror="this.src='https://via.placeholder.com/150/111/00ffcc?text=No+Image'">
+                        <div class="game-badge">
+                            <span class="badge-text">${game.code}</span>
+                        </div>
                         <div class="game-name">${game.name}</div>
-                        <button class="play-now-btn" onclick="openGame('${game.url}')">PLAY NOW</button>
+                        <button class="play-now-btn" onclick="playBeep('click'); openGame('${game.url}')">PLAY NOW</button>
                     </div>
                 `;
             });
         }
 
         function openGame(url) {
-            document.getElementById('game-frame').src = url;
-            document.getElementById('game-view').style.display = 'flex';
+            if (!isLoggedIn) {
+                pendingGameUrl = url;
+                document.getElementById('auth-screen').style.display = 'flex';
+            } else {
+                document.getElementById('game-frame').src = url;
+                document.getElementById('game-view').style.display = 'flex';
+            }
         }
 
         function closeGame() {
@@ -297,38 +819,48 @@
             document.getElementById('game-frame').src = "";
         }
 
-        // --- Supabase Real OTP Actions ---
+        function closeAuthScreen() {
+            document.getElementById('auth-screen').style.display = 'none';
+            pendingGameUrl = "";
+        }
+
+        // --- OTP Verifications ---
         async function startVerification() {
             const name = document.getElementById('user-name-inp').value.trim();
             const email = document.getElementById('user-email-inp').value.trim();
             
-            if(name.length < 3) return alert("Please enter a valid name (Min 3 characters)!");
-            if(!email || !email.includes('@')) return alert("Please enter a valid email address!");
+            if(name.length < 3) {
+                playBeep('error');
+                return alert("Operator Comms node name rejected!");
+            }
+            if(!email || !email.includes('@')) {
+                playBeep('error');
+                return alert("Signal frequency configuration invalid!");
+            }
             
             const loginBtn = document.getElementById('login-btn');
             loginBtn.disabled = true;
-            loginBtn.innerText = "SENDING OTP...";
+            loginBtn.innerText = "LINKING PROFILES...";
             
             try {
                 const { data, error } = await supabaseClient.auth.signInWithOtp({
                     email: email,
-                    options: {
-                        shouldCreateUser: true
-                    }
+                    options: { shouldCreateUser: true }
                 });
                 
                 if (error) {
-                    alert("OTP sending failed: " + error.message);
+                    playBeep('error');
+                    alert("OTP node request error: " + error.message);
                 } else {
-                    // Transition to OTP Input
                     document.getElementById('login-fields').style.display = 'none';
                     document.getElementById('otp-fields').style.display = 'block';
                 }
             } catch (err) {
+                playBeep('error');
                 alert("An error occurred: " + err.message);
             } finally {
                 loginBtn.disabled = false;
-                loginBtn.innerText = "SEND OTP";
+                loginBtn.innerText = "PROMPT SECURE OTP";
             }
         }
 
@@ -337,11 +869,14 @@
             const email = document.getElementById('user-email-inp').value.trim();
             const token = document.getElementById('otp-inp').value.trim();
             
-            if(!token || token.length < 4) return alert("Please enter a valid OTP!");
+            if(!token || token.length < 4) {
+                playBeep('error');
+                return alert("Signal code invalid!");
+            }
             
             const verifyBtn = document.getElementById('verify-btn');
             verifyBtn.disabled = true;
-            verifyBtn.innerText = "VERIFYING...";
+            verifyBtn.innerText = "DECRYPTING COMMAND...";
             
             try {
                 const { data, error } = await supabaseClient.auth.verifyOtp({
@@ -351,15 +886,17 @@
                 });
                 
                 if (error) {
-                    alert("Verification Failed: " + error.message);
+                    playBeep('error');
+                    alert("Verification Rejected: " + error.message);
                 } else {
                     loginPlayer(name);
                 }
             } catch (err) {
-                alert("An error occurred: " + err.message);
+                playBeep('error');
+                alert("Exception: " + err.message);
             } finally {
                 verifyBtn.disabled = false;
-                verifyBtn.innerText = "VERIFY OTP";
+                verifyBtn.innerText = "VERIFY & COMMENCE PLAY";
             }
         }
 
@@ -369,23 +906,31 @@
         }
 
         function loginPlayer(name) {
+            isLoggedIn = true;
             document.getElementById('auth-screen').style.display = 'none';
-            document.getElementById('dashboard').style.display = 'block';
-            document.getElementById('nav-bar').style.display = 'flex';
             document.getElementById('display-name').innerText = name.toUpperCase();
-            playerStats.coins = 100;
+            playerStats.coins = 600;
             document.getElementById('coin-val').innerText = playerStats.coins;
-            renderGames();
-            startTimer();
+            
+            if (pendingGameUrl) {
+                openGame(pendingGameUrl);
+                pendingGameUrl = "";
+            }
         }
 
+        // Live Action Survival System
         function startTimer() {
             setInterval(() => {
                 playerStats.timeActive++;
                 let m = Math.floor(playerStats.timeActive / 60);
                 let s = playerStats.timeActive % 60;
-                document.getElementById('live-timer').innerText = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
-                if(playerStats.timeActive >= 600) {
+                let formattedTime = `${m < 10 ? '0'+m : m}:${s < 10 ? '0'+s : s}`;
+                
+                // Update Spin timers (Both bottom card and top action bar)
+                document.getElementById('live-timer').innerText = formattedTime;
+                document.getElementById('top-timer-display').innerText = `⏳ ${formattedTime}`;
+                
+                if(playerStats.timeActive >= 300) {
                     document.getElementById('spin-btn').disabled = false;
                     document.getElementById('spin-btn').innerText = "SPIN UNLOCKED";
                 }
@@ -393,22 +938,30 @@
         }
 
         function handleSpin() {
-            let win = Math.floor(Math.random() * 5000) + 500;
+            let win = Math.floor(Math.random() * 5000) + 1000;
             playerStats.coins += win;
             document.getElementById('coin-val').innerText = playerStats.coins;
-            alert("You Won 💰" + win + " Coins!");
+            alert("Victory! Received 💰 " + win + " Coins!");
             playerStats.timeActive = 0;
             document.getElementById('spin-btn').disabled = true;
+            document.getElementById('spin-btn').innerText = "SPIN BONUS WHEEL";
         }
 
         function openSettings() { document.getElementById('settings-overlay').style.display = 'flex'; }
         function closeSettings() { document.getElementById('settings-overlay').style.display = 'none'; }
         function previewAvatar(i) { if (i.files[0]) { let r = new FileReader(); r.onload = (e) => document.getElementById('main-avatar').src = e.target.result; r.readAsDataURL(i.files[0]); } }
-        function saveAccount() { closeSettings(); alert("Profile Updated!"); }
+        function saveAccount() { 
+            const newName = document.getElementById('edit-name').value.trim();
+            if(newName.length >= 3) {
+                document.getElementById('display-name').innerText = newName.toUpperCase();
+            }
+            closeSettings(); 
+            alert("Operators registered!"); 
+        }
     </script>
 
     <!-- Ad Network Bar -->
     <script src="https://pl31096702.profitableratecpmnetwork.com/4e/f1/a2/4ef1a2c322adf1fb32b1ad0cf8a54ff2.js"></script>
 
 </body>
-</html>
+                                                                                                </html>
