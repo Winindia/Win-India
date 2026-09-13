@@ -1,18 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
-    <meta name="google-site-verification" content="m4o4W03hg3aBI1wr7rcrMyVI4n4HFFpyaKoGIxgkUM4" />
 <head>
     <!-- SEO Meta Tags -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="description" content="Play Real Scorpio S11 Driving Game - Poly Gamer Official Game" />
     <meta name="keywords" content="scorpio game, poly gamer, scorpio driving game, real car game" />
+    <meta name="google-site-verification" content="J1_E7cSYpVnoAFCZZdEMGbogg4bmSqiEBXFQdNaQtjw" />
     
-    
-    <title>WIN INDIA |Pro Gaming site </title>
+    <title>POLY GAMER | Pro Player Hub</title>
     
     <!-- Fonts -->
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+    
+    <!-- Supabase JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
     <style>
         :root {
@@ -44,6 +46,11 @@
         .btn-glow {
             width: 100%; padding: 16px; border-radius: 12px; border: none; background: var(--neon);
             color: black; font-weight: bold; cursor: pointer; font-family: 'Orbitron'; transition: 0.3s;
+        }
+        .btn-glow:disabled {
+            background: #222;
+            color: #666;
+            cursor: not-allowed;
         }
 
         /* --- DASHBOARD LAYOUT --- */
@@ -134,10 +141,22 @@
     <div id="auth-screen">
         <div class="auth-card">
             <h1 class="logo">POLY GAMER</h1>
-            <input type="text" id="user-name-inp" placeholder="Player Name">
-            <input type="email" id="user-email-inp" placeholder="Email Address">
-            <input type="tel" id="user-phone-inp" placeholder="Phone Number">
-            <button class="btn-glow" onclick="startVerification()">LOGIN SYSTEM</button>
+            
+            <!-- STEP 1: Name and Email input -->
+            <div id="login-fields">
+                <input type="text" id="user-name-inp" placeholder="Player Name">
+                <input type="email" id="user-email-inp" placeholder="Email Address">
+                <input type="tel" id="user-phone-inp" placeholder="Phone Number (Optional)">
+                <button class="btn-glow" id="login-btn" onclick="startVerification()">SEND OTP</button>
+            </div>
+
+            <!-- STEP 2: OTP input -->
+            <div id="otp-fields" style="display: none;">
+                <p style="color: var(--neon); font-size: 0.9rem; margin-bottom: 15px;">OTP has been sent to your email!</p>
+                <input type="text" id="otp-inp" placeholder="Enter 6-Digit OTP">
+                <button class="btn-glow" id="verify-btn" onclick="verifyOtp()">VERIFY OTP</button>
+                <p onclick="resetAuthScreen()" style="margin-top:20px; color:#ff4444; cursor:pointer; font-size: 0.8rem;">Change Email</p>
+            </div>
         </div>
     </div>
 
@@ -204,9 +223,13 @@
     </nav>
 
     <script>
+        // --- Supabase Config & Initialization ---
+        const supabaseUrl = "https://nsvbdmccafffordzcssn.supabase.co";
+        const supabaseKey = "sb_publishable_K2hZYtTcItHVImy6yucPzw_G-jfpjBd";
+        const supabaseClient = supabase.createClient(supabaseUrl, supabaseKey);
+
         // --- Game Data (28 Games Total) ---
         const games = [
-            // Original Games
             { id: "1", name: "Drift Hunters", url: "https://html5.gamedistribution.com/4254dba037de4b798541d2c97eae5016/", img: "drift_hunters.png" },
             { id: "2", name: "Madalin Stunt Cars", url: "https://html5.gamedistribution.com/c6d324c4729f48ef9a3cd8882bdf078e/", img: "madalin_stunt_cars.png" },
             { id: "3", name: "Moto X3M Pool", url: "https://html5.gamedistribution.com/1e850284c3ef4ca5bdb1614b430ed1fa/", img: "moto_x3m_pool.png" },
@@ -221,8 +244,6 @@
             { id: "12", name: "Extreme Moto", url: "https://html5.gamedistribution.com/7801fdfb4dd24e72a8c9d663a973472f/", img: "extreme_moto.png" },
             { id: "13", name: "Hill Climb Race", url: "https://html5.gamedistribution.com/ceccfc14ea414640840979ab92790710/", img: "hill_climb_race.png" },
             { id: "14", name: "Scorpio Simulator", url: "https://html5.gamedistribution.com/451e0b2249e1444c8a43a5a545b96a86/", img: "scorpio_simulator.png" },
-            
-            // New Added Games from your Iframes
             { id: "15", name: "Subway Runner", url: "https://html5.gamedistribution.com/ab2f156d72894fd8a5dedb85b34a05e4/", img: "subway_runner.png" },
             { id: "16", name: "Archer Hero", url: "https://html5.gamedistribution.com/13eabea86f7c4cd993a156258420e9ec/", img: "archer_hero.png" },
             { id: "17", name: "Combat Mission", url: "https://html5.gamedistribution.com/d64ecb1fa38042b89e02cd69faa0078f/", img: "combat_mission.png" },
@@ -240,6 +261,16 @@
         ];
 
         let playerStats = { coins: 0, timeActive: 0 };
+
+        // ऑटो-लॉगिन चेक (यदि पहले से सेशन एक्टिव है)
+        window.addEventListener('DOMContentLoaded', async () => {
+            const { data: { session } } = await supabaseClient.auth.getSession();
+            if (session && session.user) {
+                const email = session.user.email;
+                const fallbackName = email.split('@')[0].toUpperCase();
+                loginPlayer(fallbackName);
+            }
+        });
 
         // Render Games
         function renderGames() {
@@ -266,14 +297,75 @@
             document.getElementById('game-frame').src = "";
         }
 
-        function startVerification() {
-            const name = document.getElementById('user-name-inp').value;
-            if(name.length < 3) return alert("Enter valid name!");
+        // --- Supabase Real OTP Actions ---
+        async function startVerification() {
+            const name = document.getElementById('user-name-inp').value.trim();
+            const email = document.getElementById('user-email-inp').value.trim();
             
-            let otp = Math.floor(1000 + Math.random() * 9000);
-            alert("Your Security OTP: " + otp);
-            let userOtp = prompt("Enter OTP:");
-            if(userOtp == otp) loginPlayer(name);
+            if(name.length < 3) return alert("Please enter a valid name (Min 3 characters)!");
+            if(!email || !email.includes('@')) return alert("Please enter a valid email address!");
+            
+            const loginBtn = document.getElementById('login-btn');
+            loginBtn.disabled = true;
+            loginBtn.innerText = "SENDING OTP...";
+            
+            try {
+                const { data, error } = await supabaseClient.auth.signInWithOtp({
+                    email: email,
+                    options: {
+                        shouldCreateUser: true
+                    }
+                });
+                
+                if (error) {
+                    alert("OTP sending failed: " + error.message);
+                } else {
+                    // Transition to OTP Input
+                    document.getElementById('login-fields').style.display = 'none';
+                    document.getElementById('otp-fields').style.display = 'block';
+                }
+            } catch (err) {
+                alert("An error occurred: " + err.message);
+            } finally {
+                loginBtn.disabled = false;
+                loginBtn.innerText = "SEND OTP";
+            }
+        }
+
+        async function verifyOtp() {
+            const name = document.getElementById('user-name-inp').value.trim();
+            const email = document.getElementById('user-email-inp').value.trim();
+            const token = document.getElementById('otp-inp').value.trim();
+            
+            if(!token || token.length < 4) return alert("Please enter a valid OTP!");
+            
+            const verifyBtn = document.getElementById('verify-btn');
+            verifyBtn.disabled = true;
+            verifyBtn.innerText = "VERIFYING...";
+            
+            try {
+                const { data, error } = await supabaseClient.auth.verifyOtp({
+                    email: email,
+                    token: token,
+                    type: 'email'
+                });
+                
+                if (error) {
+                    alert("Verification Failed: " + error.message);
+                } else {
+                    loginPlayer(name);
+                }
+            } catch (err) {
+                alert("An error occurred: " + err.message);
+            } finally {
+                verifyBtn.disabled = false;
+                verifyBtn.innerText = "VERIFY OTP";
+            }
+        }
+
+        function resetAuthScreen() {
+            document.getElementById('login-fields').style.display = 'block';
+            document.getElementById('otp-fields').style.display = 'none';
         }
 
         function loginPlayer(name) {
